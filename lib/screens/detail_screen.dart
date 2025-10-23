@@ -60,8 +60,7 @@ class DetailScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16.0),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         candi.name,
@@ -71,7 +70,7 @@ class DetailScreen extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {}, // Aksi favorit
+                        onPressed: () {},
                         icon: const Icon(Icons.favorite_border),
                       )
                     ],
@@ -79,8 +78,7 @@ class DetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 16.0),
 
-                  Row(
-                    children: [
+                  Row(children: [
                       Icon(Icons.place, color: Colors.red),
                       const SizedBox(width: 8.0),
                       const SizedBox(
@@ -91,8 +89,7 @@ class DetailScreen extends StatelessWidget {
                     ],
                   ),
 
-                  Row(
-                    children: [
+                  Row(children: [
                       Icon(Icons.calendar_month, color: Colors.blue),
                       const SizedBox(width: 8.0),
                       const SizedBox(
@@ -103,8 +100,7 @@ class DetailScreen extends StatelessWidget {
                     ],
                   ),
 
-                  Row(
-                    children: [
+                  Row(children: [
                       Icon(Icons.house, color: Colors.green),
                       const SizedBox(width: 8.0),
                       const SizedBox(
@@ -154,7 +150,7 @@ class DetailScreen extends StatelessWidget {
                       itemCount: candi.imageUrls.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: EdgeInsets.only(left: index == 0 ? 0 : 8),
+                          padding: EdgeInsets.only(left: 8),
                           child: GestureDetector(
                             onTap: () {},
                             child: Container(
