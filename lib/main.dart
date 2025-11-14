@@ -3,6 +3,8 @@ import 'package:wisata_candi_abel/data/candi_data.dart';
 import 'package:wisata_candi_abel/screens/profile_screen.dart';
 import 'package:wisata_candi_abel/screens/sign_in_screen.dart';
 import 'package:wisata_candi_abel/screens/sign_up_screen.dart';
+import 'package:wisata_candi_abel/screens/search_screen.dart';
+import 'package:wisata_candi_abel/screens/home_screen.dart';
 import 'screens/detail_screen.dart';
 
 void main() {
@@ -36,7 +38,9 @@ class MyApp extends StatelessWidget {
       //home: ProfileScreen(),
       //home: DetailScreen(candi: candiList[0]),
       //home: SignInScreen(),
-      home: SignUpScreen(),
+      //home: SignUpScreen(),
+      // home: const SearchScreen(),
+      home : HomeScreen(),
     );
   }
 }
