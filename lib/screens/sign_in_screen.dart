@@ -69,7 +69,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 // TODO: 7. Tombol Sign In
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
                   child: const Text('Sign In')),
                 // TODO: 8. Pasang TextButton Sign Up
                 SizedBox(height: 10),

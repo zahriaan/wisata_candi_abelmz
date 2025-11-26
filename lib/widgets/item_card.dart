@@ -3,12 +3,14 @@ import 'package:wisata_candi_abel/models/candi.dart';
 import 'package:wisata_candi_abel/screens/detail_screen.dart';
 
 class ItemCard extends StatelessWidget {
+  // TODO: 1. Deklarasikan variabel yang dibutuhkan dan pasang pada konstruktor
   final Candi candi;
 
   const ItemCard({super.key, required this.candi});
 
   @override
   Widget build(BuildContext context) {
+    // TODO: 6. Implementasi routing ke DetailScreen
     return InkWell(
       onTap: () {
         Navigator.push(

@@ -1,15 +1,14 @@
-// import 'dart:ffi';
 import 'package:flutter/material.dart';
 
-class ProfileIntoItem extends StatelessWidget {
+class ProfileInfoItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final dynamic value;
+  final String value;
   final bool showEditIcon;
   final VoidCallback? onEditPressed;
   final Color iconColor;
 
-  const ProfileIntoItem({
+  const ProfileInfoItem({
     super.key,
     required this.icon,
     required this.label,
@@ -27,23 +26,30 @@ class ProfileIntoItem extends StatelessWidget {
           width: MediaQuery.of(context).size.width / 3,
           child: Row(
             children: [
+              // Icon
               Icon(icon, color: iconColor),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
+
               Text(
                 label,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
+
         Expanded(
           child: Text(
-            ': ${value.toString()}',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ': $value',
+            style: const TextStyle(fontSize: 18),
           ),
         ),
+
         if (showEditIcon)
-          InkWell(onTap: onEditPressed, child: Icon(Icons.edit)),
+          InkWell(
+            onTap: onEditPressed,
+            child: const Icon(Icons.edit),
+          ),
       ],
     );
   }
