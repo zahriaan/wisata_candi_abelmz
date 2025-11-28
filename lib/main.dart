@@ -21,30 +21,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Wisata Candi',
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            iconTheme: IconThemeData(color: Colors.deepPurple),
-            titleTextStyle: TextStyle(
-              color: Colors.deepPurple,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+      debugShowCheckedModeBanner: false,
+      title: 'Wisata Candi',
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          iconTheme: IconThemeData(color: Colors.deepPurple),
+          titleTextStyle: TextStyle(
+            color: Colors.deepPurple,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-          colorScheme:
-          ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
-            primary: Colors.deepPurple,
-            surface: Colors.deepPurple[50],
-          ),
-          useMaterial3: true,
         ),
-        initialRoute: '/signin',
-        routes: {
-          '/': (context) => const MainScreen(),
-          '/signin': (context) => const SignInScreen(),
-          '/signup': (context) => const SignUpScreen(),
-        }
+        colorScheme:
+        ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
+          primary: Colors.deepPurple,
+          surface: Colors.deepPurple[50],
+        ),
+        useMaterial3: true,
+      ),
+      home: MainScreen(),
+      initialRoute: '/',
+      routes: {
+        '/homescreen': (context) => const HomeScreen(),
+        '/signin': (context) => const SignInScreen(),
+        '/signup': (context) => const SignUpScreen(),
+      },
     );
   }
 }

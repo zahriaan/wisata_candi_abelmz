@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -9,7 +10,6 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  // TODO: 1. Deklarasi variabel yang dibutuhkan
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -17,40 +17,70 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _isSignedIn = false;
   bool _obscurePassword = true;
 
+  void _signin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String savedUsername = prefs.getString('username') ?? '';
+    final String savedPassword = prefs.getString('password') ?? '';
+
+    final String enteredUsername = _usernameController.text.trim();
+    final String enteredPassword = _passwordController.text.trim();
+
+    if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
+      setState(() {
+        _errorText = 'Nama pengguna atau kata sandi harus diisi.';
+      });
+      return;
+    }
+
+    if (savedUsername.isEmpty || savedPassword.isEmpty) {
+      setState(() {
+        _errorText = 'Akun belum terdaftar. Silakan daftar terlebih dahulu.';
+      });
+      return;
+    }
+
+    if (enteredUsername == savedUsername && enteredPassword == savedPassword) {
+      await prefs.setBool('isSignedIn', true);
+
+      setState(() {
+        _errorText = '';
+        _isSignedIn = true;
+      });
+
+      Navigator.pushReplacementNamed(context, '/');
+    } else {
+      setState(() {
+        _errorText = 'Nama pengguna atau kata sandi salah.';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
-      // TODO: 2. Pasang AppBar
       appBar: AppBar(
         title: const Text("Sign In"),
         backgroundColor: Colors.deepPurple[100],
         foregroundColor: Colors.deepPurple[900],
         elevation: 0,
       ),
-
-      // TODO: 3. Pasang Body
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Form(
-              child: Column(
-              // TODO: 4 Atur mainAlignment dan  crossAxisAlignment
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // TODO: 5. Pasang TextFormField Nama Pengguna
                 TextFormField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Nama Pengguna',
                     border: OutlineInputBorder(),
                   ),
                 ),
-
-                // TODO: 6. Pasang TextFormField Kata Sandi
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -58,23 +88,26 @@ class _SignInScreenState extends State<SignInScreen> {
                     errorText: _errorText.isNotEmpty ? _errorText : null,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      onPressed: (){},
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                       icon: Icon(
-                        _obscurePassword  ? Icons.visibility_off
+                        _obscurePassword
+                            ? Icons.visibility_off
                             : Icons.visibility,
-                      ),),
+                      ),
+                    ),
                   ),
-                    obscureText: _obscurePassword,
+                  obscureText: _obscurePassword,
                 ),
-                // TODO: 7. Tombol Sign In
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
-                  },
-                  child: const Text('Sign In')),
-                // TODO: 8. Pasang TextButton Sign Up
-                SizedBox(height: 10),
+                  onPressed: _signin,
+                  child: const Text('Sign In'),
+                ),
+                const SizedBox(height: 10),
                 RichText(
                   text: TextSpan(
                     text: 'Belum punya akun? ',
@@ -82,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       fontSize: 16,
                       color: Colors.deepPurple,
                     ),
-                    children: <TextSpan>[
+                    children: [
                       TextSpan(
                         text: 'Daftar di sini.',
                         style: const TextStyle(
@@ -92,7 +125,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            debugPrint('Tap Daftar di sini');
+                            Navigator.pushNamed(context, '/signup');
                           },
                       ),
                     ],
@@ -103,7 +136,6 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ),
-        ),
     );
   }
 }
