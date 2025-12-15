@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ProfileInfoItem extends StatelessWidget {
+class ProfileInfoItem extends StatelessWidget{
   final IconData icon;
   final String label;
   final String value;
@@ -8,8 +8,7 @@ class ProfileInfoItem extends StatelessWidget {
   final VoidCallback? onEditPressed;
   final Color iconColor;
 
-  const ProfileInfoItem({
-    super.key,
+  const ProfileInfoItem({super.key,
     required this.icon,
     required this.label,
     required this.value,
@@ -26,30 +25,33 @@ class ProfileInfoItem extends StatelessWidget {
           width: MediaQuery.of(context).size.width / 3,
           child: Row(
             children: [
-              // Icon
               Icon(icon, color: iconColor),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label ,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
 
-              Text(
-                label,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+
             ],
           ),
         ),
-
         Expanded(
           child: Text(
-            ': $value',
-            style: const TextStyle(fontSize: 18),
+            ': ${value.toString()}',
+            style: TextStyle(fontSize: 18),
+            overflow: TextOverflow.ellipsis,
+
           ),
         ),
-
         if (showEditIcon)
-          InkWell(
-            onTap: onEditPressed,
-            child: const Icon(Icons.edit),
-          ),
+          InkWell(onTap: onEditPressed, child: Icon(Icons.edit)),
       ],
     );
   }
