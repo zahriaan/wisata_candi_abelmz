@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,126 +15,92 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   String _errorText = '';
-  bool _isSignedIn = false;
   bool _obscurePassword = true;
 
-  void _signin() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String savedUsername = prefs.getString('username') ?? '';
-    final String savedPassword = prefs.getString('password') ?? '';
+  Future<void> _signIn() async {
+    final prefs = await SharedPreferences.getInstance();
 
-    final String enteredUsername = _usernameController.text.trim();
-    final String enteredPassword = _passwordController.text.trim();
+    final encryptedUsername = prefs.getString('username');
+    final encryptedPassword = prefs.getString('password');
+    final keyString = prefs.getString('key');
+    final ivString = prefs.getString('iv');
 
-    if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
-      setState(() {
-        _errorText = 'Nama pengguna atau kata sandi harus diisi.';
-      });
+    if (encryptedUsername == null ||
+        encryptedPassword == null ||
+        keyString == null ||
+        ivString == null) {
+      setState(() => _errorText = 'Akun belum terdaftar');
       return;
     }
 
-    if (savedUsername.isEmpty || savedPassword.isEmpty) {
-      setState(() {
-        _errorText = 'Akun belum terdaftar. Silakan daftar terlebih dahulu.';
-      });
-      return;
-    }
+    final key = encrypt.Key.fromBase64(keyString);
+    final iv = encrypt.IV.fromBase64(ivString);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
-    if (enteredUsername == savedUsername && enteredPassword == savedPassword) {
-      await prefs.setBool('isSignedIn', true);
+    final savedUsername =
+    encrypter.decrypt64(encryptedUsername, iv: iv);
+    final savedPassword =
+    encrypter.decrypt64(encryptedPassword, iv: iv);
 
-      setState(() {
-        _errorText = '';
-        _isSignedIn = true;
-      });
-
+    if (_usernameController.text == savedUsername &&
+        _passwordController.text == savedPassword) {
+      prefs.setBool('isSignedIn', true);
       Navigator.pushReplacementNamed(context, '/');
     } else {
-      setState(() {
-        _errorText = 'Nama pengguna atau kata sandi salah.';
-      });
+      setState(() => _errorText = 'Username atau password salah');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple[50],
-      appBar: AppBar(
-        title: const Text("Sign In"),
-        backgroundColor: Colors.deepPurple[100],
-        foregroundColor: Colors.deepPurple[900],
-        elevation: 0,
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nama Pengguna',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Kata Sandi',
-                    errorText: _errorText.isNotEmpty ? _errorText : null,
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                    ),
-                  ),
-                  obscureText: _obscurePassword,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _signin,
-                  child: const Text('Sign In'),
-                ),
-                const SizedBox(height: 10),
-                RichText(
-                  text: TextSpan(
-                    text: 'Belum punya akun? ',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.deepPurple,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: 'Daftar di sini.',
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                          fontSize: 16,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.pushNamed(context, '/signup');
-                          },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      appBar: AppBar(title: const Text('Sign In')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(labelText: 'Username'),
             ),
-          ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _passwordController,
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                errorText: _errorText.isEmpty ? null : _errorText,
+                suffixIcon: IconButton(
+                  icon: Icon(_obscurePassword
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(onPressed: _signIn, child: const Text('Sign In')),
+            const SizedBox(height: 10),
+            RichText(
+              text: TextSpan(
+                text: 'Belum punya akun? ',
+                style: const TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: 'Daftar',
+                    style: const TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () =>
+                          Navigator.pushReplacementNamed(context, '/signup'),
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
